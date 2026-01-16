@@ -1,0 +1,91 @@
+# Enum/Tuple
+
+## Enums
+
+```typescript
+// Numeric enum (default)
+enum Direction {
+	Up, // 0
+	Down, // 1
+	Left, // 2
+	Right, // 3
+}
+
+const move: Direction = Direction.Up;
+console.log(Direction[0]); // "Up" (reverse mapping)
+
+// String enum
+enum Status {
+	Pending = 'PENDING',
+	Approved = 'APPROVED',
+	Rejected = 'REJECTED',
+}
+
+const orderStatus: Status = Status.Pending;
+
+// Heterogeneous enum (mixed - avoid if possible)
+enum Mixed {
+	No = 0,
+	Yes = 'YES',
+}
+
+// Const enum (inlined at compile time)
+const enum HttpStatus {
+	OK = 200,
+	NotFound = 404,
+	InternalError = 500,
+}
+```
+
+## Enum Alternatives (Recommended)
+
+```typescript
+// Union of literal types (often preferred)
+type StatusType = 'pending' | 'approved' | 'rejected';
+
+const status: StatusType = 'pending';
+
+// Object as const (for more complex cases)
+const HTTP_STATUS = {
+	OK: 200,
+	NOT_FOUND: 404,
+	INTERNAL_ERROR: 500,
+} as const;
+
+type HttpStatusCode = (typeof HTTP_STATUS)[keyof typeof HTTP_STATUS];
+// type: 200 | 404 | 500
+```
+
+## Tuples
+
+```typescript
+// Basic tuple
+const point: [number, number] = [10, 20];
+const [x, y] = point; // Destructuring
+
+// Tuple with different types
+const userInfo: [number, string, boolean] = [1, 'Alice', true];
+const [id, name, isActive] = userInfo;
+
+// Optional elements
+type OptionalTuple = [string, number?];
+const withOptional: OptionalTuple = ['hello'];
+
+// Rest elements
+type StringAndNumbers = [string, ...number[]];
+const data: StringAndNumbers = ['sum', 1, 2, 3, 4, 5];
+
+// Labeled tuples
+type Range = [start: number, end: number];
+const range: Range = [0, 100];
+```
+
+> **Good to know:** Prefer union types over enums for simple cases. They're more lightweight and don't generate extra JavaScript code.
+
+---
+
+## References
+
+- [TypeScript Handbook - Enums](https://www.typescriptlang.org/docs/handbook/enums.html)
+- [TypeScript Handbook - Tuple Types](https://www.typescriptlang.org/docs/handbook/2/objects.html#tuple-types)
+- [Matt Pocock - Enums considered harmful](https://www.youtube.com/watch?v=jjMbPt_H3RQ)

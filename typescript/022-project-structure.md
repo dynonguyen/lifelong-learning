@@ -1,0 +1,89 @@
+# Project Structure
+
+## Basic Structure
+
+```
+my-app/
+├── src/
+│   ├── index.ts          # Entry point
+│   ├── types/            # Type definitions
+│   │   └── index.ts
+│   ├── utils/            # Utility functions
+│   │   └── index.ts
+│   ├── services/         # Business logic
+│   │   └── userService.ts
+│   └── models/           # Data models
+│       └── user.ts
+├── tests/                # Test files
+│   └── userService.test.ts
+├── dist/                 # Compiled output
+├── node_modules/
+├── package.json
+├── tsconfig.json
+├── .eslintrc.json
+└── .prettierrc
+```
+
+## Feature-Based Structure (Scalable)
+
+```
+my-app/
+├── src/
+│   ├── features/
+│   │   ├── auth/
+│   │   │   ├── auth.service.ts
+│   │   │   ├── auth.controller.ts
+│   │   │   ├── auth.types.ts
+│   │   │   └── auth.test.ts
+│   │   └── users/
+│   │       ├── users.service.ts
+│   │       ├── users.controller.ts
+│   │       ├── users.types.ts
+│   │       └── users.test.ts
+│   ├── shared/
+│   │   ├── types/
+│   │   ├── utils/
+│   │   └── constants/
+│   ├── config/
+│   │   └── index.ts
+│   └── index.ts
+├── package.json
+└── tsconfig.json
+```
+
+## tsconfig.json
+
+```json
+{
+	"compilerOptions": {
+		"target": "ES2022",
+		"module": "ESNext",
+		"moduleResolution": "bundler",
+		"strict": true,
+		"esModuleInterop": true,
+		"skipLibCheck": true,
+		"forceConsistentCasingInFileNames": true,
+		"outDir": "./dist",
+		"rootDir": "./src",
+		"declaration": true,
+		"declarationMap": true,
+		"sourceMap": true,
+		"baseUrl": "./src",
+		"paths": {
+			"@/*": ["./*"],
+			"@features/*": ["features/*"],
+			"@shared/*": ["shared/*"]
+		}
+	},
+	"include": ["src/**/*"],
+	"exclude": ["node_modules", "dist"]
+}
+```
+
+---
+
+## References
+
+- [TypeScript Handbook - Project Configuration](https://www.typescriptlang.org/docs/handbook/tsconfig-json.html)
+- [Bulletproof React - Project Structure](https://github.com/alan2207/bulletproof-react)
+- [Node.js Best Practices](https://github.com/goldbergyoni/nodebestpractices)

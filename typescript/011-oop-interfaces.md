@@ -1,0 +1,158 @@
+# OOP/Interfaces/Methods
+
+## Interfaces
+
+```typescript
+// Interface definition
+interface User {
+	id: number;
+	name: string;
+	email: string;
+	readonly createdAt: Date;
+	nickname?: string; // Optional
+}
+
+// Extending interfaces
+interface Admin extends User {
+	permissions: string[];
+	department: string;
+}
+
+// Interface for functions
+interface SearchFunc {
+	(query: string, limit?: number): Promise<string[]>;
+}
+
+// Interface with index signature
+interface Cache {
+	[key: string]: unknown;
+	ttl: number;
+}
+```
+
+## Classes
+
+```typescript
+class Person {
+	// Properties
+	private id: number;
+	public name: string;
+	protected age: number;
+	readonly birthDate: Date;
+
+	// Static property
+	static species: string = 'Homo sapiens';
+
+	// Constructor
+	constructor(id: number, name: string, age: number, birthDate: Date) {
+		this.id = id;
+		this.name = name;
+		this.age = age;
+		this.birthDate = birthDate;
+	}
+
+	// Shorthand constructor (parameter properties)
+	// constructor(
+	//   private id: number,
+	//   public name: string,
+	//   protected age: number,
+	//   readonly birthDate: Date
+	// ) {}
+
+	// Methods
+	greet(): string {
+		return `Hello, I'm ${this.name}`;
+	}
+
+	// Getter
+	get displayName(): string {
+		return `${this.name} (${this.age})`;
+	}
+
+	// Setter
+	set displayAge(value: number) {
+		if (value >= 0) {
+			this.age = value;
+		}
+	}
+
+	// Static method
+	static create(name: string): Person {
+		return new Person(Date.now(), name, 0, new Date());
+	}
+}
+```
+
+## Inheritance and Implementation
+
+```typescript
+// Interface implementation
+interface Printable {
+	print(): void;
+}
+
+interface Serializable {
+	toJSON(): string;
+}
+
+class Document implements Printable, Serializable {
+	constructor(public content: string) {}
+
+	print(): void {
+		console.log(this.content);
+	}
+
+	toJSON(): string {
+		return JSON.stringify({ content: this.content });
+	}
+}
+
+// Class inheritance
+class Employee extends Person {
+	constructor(id: number, name: string, age: number, birthDate: Date, public department: string) {
+		super(id, name, age, birthDate);
+	}
+
+	// Override method
+	greet(): string {
+		return `${super.greet()}, from ${this.department}`;
+	}
+}
+```
+
+## Abstract Classes
+
+```typescript
+abstract class Shape {
+	abstract area(): number;
+	abstract perimeter(): number;
+
+	describe(): string {
+		return `Area: ${this.area()}, Perimeter: ${this.perimeter()}`;
+	}
+}
+
+class Rectangle extends Shape {
+	constructor(public width: number, public height: number) {
+		super();
+	}
+
+	area(): number {
+		return this.width * this.height;
+	}
+
+	perimeter(): number {
+		return 2 * (this.width + this.height);
+	}
+}
+```
+
+> **Good to know:** In TypeScript, prefer `type` for unions/intersections and `interface` for object shapes that may be extended. Interfaces support declaration merging.
+
+---
+
+## References
+
+- [TypeScript Handbook - Classes](https://www.typescriptlang.org/docs/handbook/2/classes.html)
+- [TypeScript Handbook - Interfaces](https://www.typescriptlang.org/docs/handbook/2/everyday-types.html#interfaces)
+- [TypeScript Deep Dive - Classes](https://basarat.gitbook.io/typescript/future-javascript/classes)

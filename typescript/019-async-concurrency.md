@@ -1,0 +1,135 @@
+# Parallel/Concurrent/Asynchronous/Multi-threading/Multi-processing
+
+## Promises
+
+```typescript
+// Creating a Promise
+function delay(ms: number): Promise<void> {
+	return new Promise(resolve => setTimeout(resolve, ms));
+}
+
+// Promise with result
+function fetchData(): Promise<string> {
+	return new Promise((resolve, reject) => {
+		setTimeout(() => {
+			const success = Math.random() > 0.5;
+			if (success) {
+				resolve('Data loaded');
+			} else {
+				reject(new Error('Failed to load'));
+			}
+		}, 1000);
+	});
+}
+
+// Chaining
+fetchData()
+	.then(data => data.toUpperCase())
+	.then(upper => console.log(upper))
+	.catch(error => console.error(error));
+```
+
+## Async/Await
+
+```typescript
+// Async function
+async function loadUser(id: string): Promise<User> {
+	const response = await fetch(`/api/users/${id}`);
+	if (!response.ok) {
+		throw new Error('Failed to load user');
+	}
+	return response.json();
+}
+
+// Sequential execution
+async function sequential(): Promise<void> {
+	const user1 = await loadUser('1'); // Wait
+	const user2 = await loadUser('2'); // Then wait
+	console.log(user1, user2);
+}
+
+// Parallel execution
+async function parallel(): Promise<void> {
+	const [user1, user2] = await Promise.all([loadUser('1'), loadUser('2')]);
+	console.log(user1, user2);
+}
+```
+
+## Promise Utilities
+
+```typescript
+// Promise.all - wait for all (fails if any fails)
+const results = await Promise.all([fetchUser('1'), fetchUser('2'), fetchUser('3')]);
+
+// Promise.allSettled - wait for all (never fails)
+const settled = await Promise.allSettled([fetchUser('1'), fetchUser('2')]);
+settled.forEach(result => {
+	if (result.status === 'fulfilled') {
+		console.log(result.value);
+	} else {
+		console.error(result.reason);
+	}
+});
+
+// Promise.race - first to complete
+const fastest = await Promise.race([fetchFromServerA(), fetchFromServerB()]);
+
+// Promise.any - first to succeed
+const firstSuccess = await Promise.any([fetchFromServerA(), fetchFromServerB()]);
+```
+
+## Web Workers (True Parallelism)
+
+```typescript
+// main.ts
+const worker = new Worker('worker.js');
+
+worker.postMessage({ type: 'compute', data: [1, 2, 3, 4, 5] });
+
+worker.onmessage = event => {
+	console.log('Result:', event.data);
+};
+
+worker.onerror = error => {
+	console.error('Worker error:', error);
+};
+
+// worker.ts (separate file)
+self.onmessage = event => {
+	const { type, data } = event.data;
+	if (type === 'compute') {
+		const result = data.reduce((a: number, b: number) => a + b, 0);
+		self.postMessage(result);
+	}
+};
+```
+
+## Async Iterators
+
+```typescript
+// Async generator
+async function* asyncNumbers(): AsyncGenerator<number> {
+	for (let i = 0; i < 5; i++) {
+		await delay(100);
+		yield i;
+	}
+}
+
+// Consuming async iterator
+async function processNumbers(): Promise<void> {
+	for await (const num of asyncNumbers()) {
+		console.log(num);
+	}
+}
+```
+
+> **Good to know:** JavaScript is single-threaded. `async/await` provides concurrency (not parallelism) through the event loop. For true parallelism, use Web Workers or Node.js `worker_threads`.
+
+---
+
+## References
+
+- [MDN - Promises](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Promise)
+- [MDN - async/await](https://developer.mozilla.org/en-US/docs/Learn/JavaScript/Asynchronous/Promises)
+- [MDN - Web Workers](https://developer.mozilla.org/en-US/docs/Web/API/Web_Workers_API)
+- [Node.js - Worker Threads](https://nodejs.org/api/worker_threads.html)

@@ -1,0 +1,6 @@
+.cursor/
+dist/
+build/
+node_modules/
+.env*
+!.env.example

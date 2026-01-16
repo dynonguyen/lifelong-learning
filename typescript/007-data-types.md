@@ -1,0 +1,86 @@
+# Data Types
+
+## Primitive Types
+
+```typescript
+// String
+const name: string = 'TypeScript';
+const template: string = `Hello, ${name}`;
+
+// Number (integers and floats)
+const integer: number = 42;
+const float: number = 3.14;
+const hex: number = 0xff;
+const binary: number = 0b1010;
+
+// Boolean
+const isActive: boolean = true;
+
+// Null and Undefined
+const nullValue: null = null;
+const undefinedValue: undefined = undefined;
+
+// Symbol (unique identifier)
+const sym: symbol = Symbol('unique');
+
+// BigInt (large integers)
+const bigNumber: bigint = 9007199254740991n;
+```
+
+## Special Types
+
+```typescript
+// Any (opt-out of type checking - avoid when possible)
+let flexible: any = 'string';
+flexible = 42; // No error
+
+// Unknown (safer alternative to any)
+let uncertain: unknown = 'might be anything';
+if (typeof uncertain === 'string') {
+	console.log(uncertain.toUpperCase()); // Type narrowed
+}
+
+// Void (no return value)
+function logMessage(msg: string): void {
+	console.log(msg);
+}
+
+// Never (function never returns)
+function throwError(message: string): never {
+	throw new Error(message);
+}
+
+// Object
+const person: object = { name: 'Alice' };
+
+// Literal types
+type Status = 'pending' | 'approved' | 'rejected';
+const orderStatus: Status = 'pending';
+```
+
+## Type Aliases
+
+```typescript
+// Creating custom types
+type UserId = string;
+type Age = number;
+type Coordinates = { x: number; y: number };
+
+// Union types
+type StringOrNumber = string | number;
+type Result = 'success' | 'error' | 'pending';
+
+// Intersection types
+type Employee = { name: string; department: string };
+type Manager = Employee & { reports: string[] };
+```
+
+> **Good to know:** Use `unknown` instead of `any` when you need flexibility but still want type safety. It forces you to narrow the type before use.
+
+---
+
+## References
+
+- [TypeScript Handbook - Everyday Types](https://www.typescriptlang.org/docs/handbook/2/everyday-types.html)
+- [TypeScript Handbook - Narrowing](https://www.typescriptlang.org/docs/handbook/2/narrowing.html)
+- [TypeScript Handbook - Type Aliases](https://www.typescriptlang.org/docs/handbook/2/everyday-types.html#type-aliases)

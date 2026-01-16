@@ -1,0 +1,94 @@
+# Modules/Packages
+
+## ES Modules (Recommended)
+
+```typescript
+// math.ts - Named exports
+export const PI = 3.14159;
+
+export function add(a: number, b: number): number {
+	return a + b;
+}
+
+export type MathOperation = (a: number, b: number) => number;
+
+// Default export
+export default class Calculator {
+	add(a: number, b: number): number {
+		return a + b;
+	}
+}
+```
+
+```typescript
+// main.ts - Importing
+import Calculator, { PI, add, type MathOperation } from './math';
+
+const calc = new Calculator();
+console.log(calc.add(1, 2));
+console.log(add(3, 4));
+
+// Renaming imports
+import { add as sum } from './math';
+
+// Import all
+import * as MathUtils from './math';
+console.log(MathUtils.PI);
+```
+
+## Re-exporting
+
+```typescript
+// index.ts - Barrel file
+export { User, type UserType } from './user';
+export { Product } from './product';
+export * from './utils';
+export { default as Calculator } from './calculator';
+```
+
+## Type-only Imports
+
+```typescript
+// Import only types (removed at compile time)
+import type { User, Config } from './types';
+
+// Inline type import
+import { createUser, type UserOptions } from './user';
+```
+
+## Module Resolution
+
+```typescript
+// tsconfig.json
+{
+  "compilerOptions": {
+    "module": "ESNext",
+    "moduleResolution": "bundler", // or "node", "node16"
+    "baseUrl": "./src",
+    "paths": {
+      "@/*": ["*"],
+      "@components/*": ["components/*"]
+    }
+  }
+}
+```
+
+```typescript
+// Using path aliases
+import { Button } from '@components/Button';
+import { utils } from '@/utils';
+```
+
+> **Good to know:** Use `.js` extension in imports when targeting ES modules in Node.js, even for TypeScript files:
+>
+> ```typescript
+> import { helper } from './utils.js'; // Even though the file is utils.ts
+> ```
+
+---
+
+## References
+
+- [TypeScript Handbook - Modules](https://www.typescriptlang.org/docs/handbook/2/modules.html)
+- [TypeScript Handbook - Module Resolution](https://www.typescriptlang.org/docs/handbook/module-resolution.html)
+- [Node.js - ES Modules](https://nodejs.org/api/esm.html)

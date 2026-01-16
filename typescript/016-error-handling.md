@@ -1,0 +1,126 @@
+# Error Handling/Exceptions
+
+## Try-Catch-Finally
+
+```typescript
+function parseJSON(json: string): unknown {
+	try {
+		return JSON.parse(json);
+	} catch (error) {
+		if (error instanceof SyntaxError) {
+			console.error('Invalid JSON:', error.message);
+		}
+		throw error;
+	} finally {
+		console.log('Parsing attempted');
+	}
+}
+```
+
+## Typed Errors
+
+```typescript
+// Custom error classes
+class ValidationError extends Error {
+	constructor(public field: string, message: string) {
+		super(message);
+		this.name = 'ValidationError';
+	}
+}
+
+class NotFoundError extends Error {
+	constructor(resource: string) {
+		super(`${resource} not found`);
+		this.name = 'NotFoundError';
+	}
+}
+
+// Using custom errors
+function validateUser(user: { name?: string }): void {
+	if (!user.name) {
+		throw new ValidationError('name', 'Name is required');
+	}
+}
+
+// Handling specific errors
+try {
+	validateUser({});
+} catch (error) {
+	if (error instanceof ValidationError) {
+		console.error(`Field ${error.field}: ${error.message}`);
+	} else if (error instanceof NotFoundError) {
+		console.error(error.message);
+	} else {
+		throw error; // Re-throw unknown errors
+	}
+}
+```
+
+## Result Pattern (Alternative to Exceptions)
+
+```typescript
+// Result type
+type Result<T, E = Error> = { success: true; data: T } | { success: false; error: E };
+
+function divide(a: number, b: number): Result<number, string> {
+	if (b === 0) {
+		return { success: false, error: 'Division by zero' };
+	}
+	return { success: true, data: a / b };
+}
+
+// Using Result
+const result = divide(10, 2);
+if (result.success) {
+	console.log(result.data); // 5
+} else {
+	console.error(result.error);
+}
+```
+
+## Async Error Handling
+
+```typescript
+async function fetchUser(id: string): Promise<User> {
+	try {
+		const response = await fetch(`/api/users/${id}`);
+		if (!response.ok) {
+			throw new Error(`HTTP error: ${response.status}`);
+		}
+		return await response.json();
+	} catch (error) {
+		if (error instanceof TypeError) {
+			throw new Error('Network error');
+		}
+		throw error;
+	}
+}
+
+// With async/await
+async function main(): Promise<void> {
+	try {
+		const user = await fetchUser('123');
+		console.log(user);
+	} catch (error) {
+		console.error('Failed to fetch user:', error);
+	}
+}
+```
+
+> **Good to know:** TypeScript 4.4+ supports `unknown` as the catch clause variable type with `useUnknownInCatchVariables`. This is safer than `any`:
+>
+> ```typescript
+> try { ... } catch (error) {
+>   if (error instanceof Error) {
+>     console.log(error.message);
+>   }
+> }
+> ```
+
+---
+
+## References
+
+- [MDN - Error Handling](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Guide/Control_flow_and_error_handling#exception_handling_statements)
+- [TypeScript Deep Dive - Exception Handling](https://basarat.gitbook.io/typescript/type-system/exceptions)
+- [neverthrow - Type-safe errors](https://github.com/supermacro/neverthrow)

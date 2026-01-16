@@ -1,0 +1,43 @@
+# Variables & Constants
+
+```typescript
+// Constants (immutable binding)
+const PI: number = 3.14159;
+const APP_NAME: string = 'MyApp';
+
+// Variables (mutable)
+let counter: number = 0;
+counter = 1; // OK
+
+// Block scoping
+if (true) {
+	let blockScoped: string = 'only here';
+	const alsoBlockScoped: number = 42;
+}
+// blockScoped is not accessible here
+
+// Object constants (binding is immutable, properties are mutable)
+const config = {
+	apiUrl: 'https://api.example.com',
+	timeout: 5000,
+};
+config.timeout = 10000; // OK - modifying property
+// config = {}; // Error - cannot reassign const
+
+// Readonly for immutable properties
+const frozenConfig: Readonly<{ apiUrl: string; timeout: number }> = {
+	apiUrl: 'https://api.example.com',
+	timeout: 5000,
+};
+// frozenConfig.timeout = 10000; // Error - readonly property
+```
+
+> **Good to know:** Avoid `var` - it has function scoping and hoisting issues. Always prefer `const` and use `let` only when reassignment is needed.
+
+---
+
+## References
+
+- [TypeScript Handbook - Variable Declarations](https://www.typescriptlang.org/docs/handbook/variable-declarations.html)
+- [MDN - const](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Statements/const)
+- [MDN - let](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Statements/let)

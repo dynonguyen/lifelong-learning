@@ -1,0 +1,113 @@
+# Coding Conventions/Styles
+
+## Naming Conventions
+
+```typescript
+// Variables and functions: camelCase
+const userName = "alice";
+function calculateTotal(items: Item[]): number { ... }
+
+// Types, interfaces, classes: PascalCase
+type UserRole = "admin" | "user";
+interface UserProfile { ... }
+class UserService { ... }
+
+// Constants: UPPER_SNAKE_CASE or camelCase
+const MAX_RETRY_COUNT = 3;
+const apiBaseUrl = "https://api.example.com";
+
+// Private members: underscore prefix (optional)
+class User {
+  private _password: string;
+}
+
+// Boolean variables: is/has/should prefix
+const isActive = true;
+const hasPermission = false;
+const shouldRetry = true;
+```
+
+## File Naming
+
+```typescript
+// Components: PascalCase
+UserProfile.tsx;
+Button.tsx;
+
+// Utilities/modules: camelCase or kebab-case
+userService.ts;
+date - utils.ts;
+
+// Types: .types.ts or .d.ts
+user.types.ts;
+global.d.ts;
+
+// Tests: .test.ts or .spec.ts
+user.test.ts;
+user.spec.ts;
+```
+
+## Code Style
+
+```typescript
+// Prefer const over let
+const config = { ... };
+
+// Use explicit return types for public APIs
+function fetchUser(id: string): Promise<User> { ... }
+
+// Prefer arrow functions for callbacks
+const doubled = numbers.map((n) => n * 2);
+
+// Avoid any, use unknown instead
+function parseResponse(data: unknown): User { ... }
+
+// Use optional chaining and nullish coalescing
+const city = user?.address?.city ?? "Unknown";
+
+// Destructure when appropriate
+const { name, age } = user;
+const [first, ...rest] = items;
+```
+
+## ESLint Configuration
+
+```json
+// .eslintrc.json
+{
+	"extends": [
+		"eslint:recommended",
+		"@typescript-eslint/recommended",
+		"@typescript-eslint/recommended-requiring-type-checking"
+	],
+	"rules": {
+		"@typescript-eslint/explicit-function-return-type": "warn",
+		"@typescript-eslint/no-explicit-any": "error",
+		"@typescript-eslint/no-unused-vars": "error"
+	}
+}
+```
+
+## Prettier Configuration
+
+```json
+// .prettierrc
+{
+	"semi": true,
+	"singleQuote": false,
+	"tabWidth": 2,
+	"trailingComma": "es5",
+	"printWidth": 80
+}
+```
+
+> **Good to know:** Use `// @ts-expect-error` instead of `// @ts-ignore` - it will error if the expected error disappears, helping catch when workarounds become unnecessary.
+
+---
+
+## References
+
+- [Google TypeScript Style Guide](https://google.github.io/styleguide/tsguide.html)
+- [Airbnb JavaScript Style Guide](https://github.com/airbnb/javascript)
+- [TypeScript ESLint](https://typescript-eslint.io/)
+- [Prettier](https://prettier.io/docs/en/index.html)

@@ -1,0 +1,22 @@
+# Terminologies
+
+| Term                | Description                                                  |
+| ------------------- | ------------------------------------------------------------ |
+| `Type annotation`   | Explicitly declaring the type of a variable                  |
+| `Type inference`    | TypeScript automatically determining types                   |
+| `Union type`        | A type that can be one of several types (`string \| number`) |
+| `Intersection type` | Combining multiple types into one (`A & B`)                  |
+| `Type alias`        | Creating a custom name for a type                            |
+| `Interface`         | Defining the shape of an object                              |
+| `Generic`           | Creating reusable components with type parameters            |
+| `Type guard`        | Narrowing types within conditional blocks                    |
+| `Declaration file`  | `.d.ts` files providing type information for JS libraries    |
+| `Literal type`      | Exact value as a type (`"success" \| "error"`)               |
+
+---
+
+## References
+
+- [TypeScript Handbook - Everyday Types](https://www.typescriptlang.org/docs/handbook/2/everyday-types.html)
+- [TypeScript Glossary](https://www.typescriptlang.org/docs/handbook/typescript-from-scratch.html)
+- [TypeScript Cheat Sheets](https://www.typescriptlang.org/cheatsheets)
