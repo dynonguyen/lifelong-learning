@@ -1,0 +1,58 @@
+# Terminologies
+
+| Term              | Description                                                                 |
+| ----------------- | --------------------------------------------------------------------------- |
+| `Package`         | A collection of source files in the same directory compiled together       |
+| `Module`          | A collection of packages with a `go.mod` file defining dependencies         |
+| `GOPATH`          | Workspace directory for Go code (legacy, modules preferred now)             |
+| `GOROOT`          | Installation directory of Go                                                |
+| `Goroutine`       | Lightweight thread managed by Go runtime                                    |
+| `Channel`         | Typed conduit for communication between goroutines                          |
+| `Interface`       | A set of method signatures; types implement interfaces implicitly           |
+| `Struct`          | User-defined type that groups fields                                        |
+| `Pointer`         | Variable storing the memory address of another variable                     |
+| `Slice`           | Dynamic, flexible view into arrays                                          |
+| `Map`             | Built-in associative data type (hash table)                                 |
+| `Defer`           | Schedules a function call to run after the surrounding function returns     |
+| `Panic`           | Runtime error that stops normal execution                                   |
+| `Recover`         | Regains control of a panicking goroutine                                    |
+| `Zero value`      | Default value for uninitialized variables                                   |
+| `Receiver`        | The type a method is attached to                                            |
+| `Embedding`       | Composition mechanism for types                                             |
+| `Type assertion`  | Extracts the concrete type from an interface value                          |
+| `Type switch`     | Switch statement that compares types instead of values                      |
+| `Blank identifier`| `_` used to ignore values                                                   |
+| `init()`          | Special function that runs before `main()`                                  |
+| `go.mod`          | File defining module path and dependencies                                  |
+| `go.sum`          | File containing cryptographic checksums of dependencies                     |
+| `Build tags`      | Conditional compilation directives                                          |
+| `CGO`             | Mechanism to call C code from Go                                            |
+| `Context`         | Carries deadlines, cancellation signals, and request-scoped values          |
+
+## Common Abbreviations
+
+| Abbreviation | Meaning                               |
+| ------------ | ------------------------------------- |
+| `pkg`        | Package                               |
+| `cmd`        | Command (executable package)          |
+| `ctx`        | Context                               |
+| `err`        | Error                                 |
+| `req`        | Request                               |
+| `res`/`resp` | Response                              |
+| `cfg`        | Configuration                         |
+| `opts`       | Options                               |
+| `wg`         | WaitGroup                             |
+| `mu`         | Mutex                                 |
+| `ch`         | Channel                               |
+| `buf`        | Buffer                                |
+| `fn`         | Function                              |
+
+> **Good to know:** Go favors short, concise names, especially for local variables and receivers. Single-letter names like `i`, `n`, `r`, `w` are common and idiomatic when the scope is small and the meaning is clear from context.
+
+---
+
+## References
+
+- [Go - Glossary (Effective Go)](https://go.dev/doc/effective_go)
+- [Go - Language Specification](https://go.dev/ref/spec)
+- [Go Code Review Comments](https://github.com/golang/go/wiki/CodeReviewComments)

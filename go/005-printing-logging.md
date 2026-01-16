@@ -1,0 +1,163 @@
+# Printing/Logging
+
+## fmt Package (Standard Output)
+
+```go
+import "fmt"
+
+// Print without newline
+fmt.Print("Hello")
+
+// Print with newline
+fmt.Println("Hello, World!")
+
+// Formatted print
+name := "Alice"
+age := 30
+fmt.Printf("Name: %s, Age: %d\n", name, age)
+
+// Sprint - return string instead of printing
+message := fmt.Sprintf("User: %s", name)
+
+// Print to io.Writer
+fmt.Fprintln(os.Stderr, "Error message")
+```
+
+## Format Verbs
+
+```go
+// General
+fmt.Printf("%v\n", user)       // Default format
+fmt.Printf("%+v\n", user)      // With field names (structs)
+fmt.Printf("%#v\n", user)      // Go syntax representation
+fmt.Printf("%T\n", user)       // Type
+
+// Strings and bytes
+fmt.Printf("%s\n", "hello")    // String
+fmt.Printf("%q\n", "hello")    // Quoted string
+
+// Integers
+fmt.Printf("%d\n", 42)         // Decimal
+fmt.Printf("%b\n", 42)         // Binary
+fmt.Printf("%x\n", 42)         // Hexadecimal
+fmt.Printf("%o\n", 42)         // Octal
+
+// Floats
+fmt.Printf("%f\n", 3.14)       // Decimal point
+fmt.Printf("%.2f\n", 3.14159)  // 2 decimal places
+fmt.Printf("%e\n", 1234.5)     // Scientific notation
+
+// Boolean
+fmt.Printf("%t\n", true)       // true or false
+
+// Pointer
+fmt.Printf("%p\n", &user)      // Memory address
+
+// Width and precision
+fmt.Printf("%10s\n", "hi")     // Right-align, width 10
+fmt.Printf("%-10s\n", "hi")    // Left-align, width 10
+fmt.Printf("%010d\n", 42)      // Zero-padded, width 10
+```
+
+## log Package (Standard Logging)
+
+```go
+import "log"
+
+// Basic logging (includes timestamp)
+log.Println("Application started")
+log.Printf("User %s logged in", username)
+
+// Fatal - logs and calls os.Exit(1)
+log.Fatal("Critical error occurred")
+log.Fatalf("Failed to connect: %v", err)
+
+// Panic - logs and calls panic()
+log.Panic("Unexpected state")
+log.Panicf("Invalid value: %v", value)
+
+// Custom logger
+logger := log.New(os.Stdout, "INFO: ", log.Ldate|log.Ltime|log.Lshortfile)
+logger.Println("Custom log message")
+```
+
+## log Flags
+
+```go
+log.SetFlags(log.Ldate | log.Ltime | log.Lmicroseconds | log.Lshortfile)
+
+// Available flags
+log.Ldate         // 2009/01/23
+log.Ltime         // 01:23:23
+log.Lmicroseconds // 01:23:23.123123
+log.Llongfile     // /path/to/file.go:23
+log.Lshortfile    // file.go:23
+log.LUTC          // Use UTC time
+log.Lmsgprefix    // Move prefix before message
+log.LstdFlags     // Ldate | Ltime
+```
+
+## slog Package (Structured Logging - Go 1.21+)
+
+```go
+import "log/slog"
+
+// Default logger
+slog.Info("User logged in", "user_id", 123, "ip", "192.168.1.1")
+slog.Warn("Rate limit approaching", "current", 95, "max", 100)
+slog.Error("Failed to process", "error", err, "request_id", reqID)
+
+// With context
+slog.InfoContext(ctx, "Processing request", "method", "GET")
+
+// Create custom logger
+logger := slog.New(slog.NewJSONHandler(os.Stdout, &slog.HandlerOptions{
+    Level: slog.LevelDebug,
+}))
+slog.SetDefault(logger)
+
+// Grouped attributes
+slog.Info("Request completed",
+    slog.Group("request",
+        slog.String("method", "POST"),
+        slog.String("path", "/users"),
+    ),
+    slog.Group("response",
+        slog.Int("status", 200),
+        slog.Duration("latency", time.Millisecond*50),
+    ),
+)
+
+// Logger with default attributes
+userLogger := slog.With("user_id", 123)
+userLogger.Info("Action performed")
+```
+
+## Output Examples
+
+```go
+// fmt.Printf with struct
+type User struct {
+    Name string
+    Age  int
+}
+user := User{Name: "Alice", Age: 30}
+
+fmt.Printf("%v\n", user)   // {Alice 30}
+fmt.Printf("%+v\n", user)  // {Name:Alice Age:30}
+fmt.Printf("%#v\n", user)  // main.User{Name:"Alice", Age:30}
+
+// slog JSON output
+// {"time":"2024-01-15T10:30:00Z","level":"INFO","msg":"User logged in","user_id":123}
+```
+
+> **Good to know:** For production applications, prefer `log/slog` over `log` for structured, leveled logging. It outputs JSON by default which integrates well with log aggregation systems like ELK, Datadog, and CloudWatch.
+
+---
+
+## References
+
+- [Go - fmt Package](https://pkg.go.dev/fmt)
+- [Go - log Package](https://pkg.go.dev/log)
+- [Go - slog Package](https://pkg.go.dev/log/slog)
+- [Structured Logging with slog](https://go.dev/blog/slog)

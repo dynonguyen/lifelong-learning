@@ -1,0 +1,153 @@
+# Basic Syntax/Declarations
+
+## Package Declaration
+
+Every Go file starts with a package declaration:
+
+```go
+package main // Executable package
+
+package user // Library package
+```
+
+## Imports
+
+```go
+// Single import
+import "fmt"
+
+// Multiple imports (grouped)
+import (
+    "encoding/json"
+    "fmt"
+    "net/http"
+    
+    "github.com/gin-gonic/gin" // Third-party packages after blank line
+)
+
+// Aliased import
+import (
+    myjson "encoding/json"
+)
+
+// Blank import (for side effects only)
+import (
+    _ "github.com/lib/pq"
+)
+```
+
+## Main Function
+
+```go
+package main
+
+import "fmt"
+
+func main() {
+    fmt.Println("Hello, World!")
+}
+```
+
+## Comments
+
+```go
+// Single-line comment
+
+/*
+Multi-line
+comment
+*/
+
+// Doc comments go directly above declarations
+// User represents a user in the system.
+type User struct {
+    Name string
+}
+```
+
+## Semicolons
+
+Go uses semicolons to terminate statements, but they are automatically inserted by the lexer. You typically don't write them:
+
+```go
+// Correct
+x := 1
+y := 2
+
+// Also valid but unconventional
+x := 1; y := 2
+```
+
+## Code Blocks and Braces
+
+Opening brace must be on the same line:
+
+```go
+// Correct
+func main() {
+    // code
+}
+
+// WRONG - won't compile
+func main()
+{
+    // code
+}
+```
+
+## Basic Declarations
+
+```go
+// Variable declaration with type
+var name string
+var age int
+
+// Variable with initialization
+var count int = 10
+
+// Type inference
+var message = "Hello" // inferred as string
+
+// Short declaration (inside functions only)
+score := 100
+
+// Multiple declarations
+var (
+    firstName string = "John"
+    lastName  string = "Doe"
+    age       int    = 30
+)
+
+// Multiple short declarations
+x, y, z := 1, 2, 3
+```
+
+## Constants
+
+```go
+const Pi = 3.14159
+const MaxSize = 100
+
+// Grouped constants
+const (
+    StatusOK    = 200
+    StatusError = 500
+)
+
+// iota for enumeration
+const (
+    Sunday = iota // 0
+    Monday        // 1
+    Tuesday       // 2
+)
+```
+
+> **Good to know:** Go enforces strict formatting. Use `go fmt` to automatically format your code. Unused imports and variables are compile errors, not warnings.
+
+---
+
+## References
+
+- [Go - A Tour of Go](https://go.dev/tour/basics)
+- [Go - Language Specification](https://go.dev/ref/spec)
+- [Effective Go](https://go.dev/doc/effective_go)

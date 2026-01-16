@@ -1,0 +1,158 @@
+# Why Use/Use Cases
+
+## Real-World Applications
+
+| Application Type         | Examples                      | Why Go?                                  |
+| ------------------------ | ----------------------------- | ---------------------------------------- |
+| **Cloud Infrastructure** | Docker, Kubernetes, Terraform | Fast compilation, small binaries         |
+| **Microservices**        | REST APIs, gRPC services      | Excellent concurrency, low memory        |
+| **CLI Tools**            | kubectl, gh, hugo             | Single binary distribution, fast startup |
+| **DevOps Tools**         | Prometheus, Grafana, Vault    | Cross-platform, minimal dependencies     |
+| **Networking**           | Proxies, load balancers, VPNs | Goroutines, efficient I/O                |
+| **Databases**            | CockroachDB, InfluxDB, TiDB   | Performance, garbage collection          |
+| **Web Servers**          | Caddy, Traefik                | Built-in HTTP/2, TLS support             |
+| **Blockchain**           | Ethereum (geth), Cosmos       | Concurrency, cryptographic libraries     |
+
+## Common Use Cases in Practice
+
+**1. REST API Server**
+
+```go
+package main
+
+import (
+    "encoding/json"
+    "net/http"
+)
+
+type User struct {
+    ID    string `json:"id"`
+    Name  string `json:"name"`
+    Email string `json:"email"`
+}
+
+func main() {
+    http.HandleFunc("/users", func(w http.ResponseWriter, r *http.Request) {
+        user := User{ID: "1", Name: "John", Email: "john@example.com"}
+        w.Header().Set("Content-Type", "application/json")
+        json.NewEncoder(w).Encode(user)
+    })
+    http.ListenAndServe(":8080", nil)
+}
+```
+
+**2. CLI Tool**
+
+```go
+package main
+
+import (
+    "flag"
+    "fmt"
+    "os"
+)
+
+func main() {
+    name := flag.String("name", "World", "name to greet")
+    flag.Parse()
+
+    fmt.Printf("Hello, %s!\n", *name)
+}
+```
+
+**3. Concurrent Worker Pool**
+
+```go
+package main
+
+import (
+    "fmt"
+    "sync"
+)
+
+func main() {
+    jobs := make(chan int, 100)
+    var wg sync.WaitGroup
+
+    // Start 5 workers
+    for w := 1; w <= 5; w++ {
+        wg.Add(1)
+        go func(id int) {
+            defer wg.Done()
+            for job := range jobs {
+                fmt.Printf("Worker %d processing job %d\n", id, job)
+            }
+        }(w)
+    }
+
+    // Send jobs
+    for j := 1; j <= 20; j++ {
+        jobs <- j
+    }
+    close(jobs)
+
+    wg.Wait()
+}
+```
+
+**4. gRPC Service**
+
+```go
+package main
+
+import (
+    "context"
+    "log"
+    "net"
+
+    pb "myapp/proto"
+    "google.golang.org/grpc"
+)
+
+type server struct {
+    pb.UnimplementedUserServiceServer
+}
+
+func (s *server) GetUser(ctx context.Context, req *pb.UserRequest) (*pb.UserResponse, error) {
+    return &pb.UserResponse{Id: req.Id, Name: "John"}, nil
+}
+
+func main() {
+    lis, _ := net.Listen("tcp", ":50051")
+    s := grpc.NewServer()
+    pb.RegisterUserServiceServer(s, &server{})
+    log.Fatal(s.Serve(lis))
+}
+```
+
+## Key Advantages
+
+| Advantage              | Description                                     |
+| ---------------------- | ----------------------------------------------- |
+| `Simplicity`           | Small language spec, easy to learn and read     |
+| `Fast compilation`     | Compile large projects in seconds               |
+| `Static binary`        | Single binary with no dependencies              |
+| `Built-in concurrency` | Goroutines and channels as first-class features |
+| `Strong stdlib`        | HTTP, JSON, crypto, testing built-in            |
+| `Cross-compilation`    | Build for any OS/arch from any machine          |
+| `Garbage collection`   | Automatic memory management with low latency    |
+| `Tooling`              | go fmt, go test, go vet included                |
+
+## When NOT to Use Go
+
+- GUI desktop applications (limited native GUI support)
+- Real-time systems requiring manual memory control
+- Heavy numerical computing (Python/Julia ecosystem better)
+- Rapid prototyping with dynamic typing needs
+- When you need advanced type system features (generics are still basic)
+
+> **Good to know:** Go powers much of the cloud-native ecosystem. Docker, Kubernetes, etcd, Prometheus, and Terraform are all written in Go. If you're working in DevOps or cloud infrastructure, Go is often the lingua franca.
+
+---
+
+## References
+
+- [Go - Why Go](https://go.dev/solutions/)
+- [Go at Google: Language Design in the Service of Software Engineering](https://go.dev/talks/2012/splash.article)
+- [The Go Programming Language Specification](https://go.dev/ref/spec)
+- [Awesome Go](https://github.com/avelino/awesome-go)

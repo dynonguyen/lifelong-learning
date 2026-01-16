@@ -1,0 +1,260 @@
+# Enums (iota)/Tuple Patterns
+
+## Enums with iota
+
+Go doesn't have a built-in enum type. Use `const` with `iota` instead:
+
+```go
+// Basic enum
+type Status int
+
+const (
+    StatusPending Status = iota  // 0
+    StatusActive                  // 1
+    StatusCompleted               // 2
+    StatusCancelled               // 3
+)
+
+// Usage
+var s Status = StatusActive
+```
+
+## iota Patterns
+
+```go
+// Start from 1
+const (
+    Sunday = iota + 1  // 1
+    Monday             // 2
+    Tuesday            // 3
+)
+
+// Skip values
+const (
+    _       = iota  // 0 (skip)
+    Small           // 1
+    Medium          // 2
+    Large           // 3
+)
+
+// Powers of 2 (bitmask)
+const (
+    FlagRead   = 1 << iota  // 1
+    FlagWrite               // 2
+    FlagExec                // 4
+)
+
+// Bytes
+const (
+    _  = iota
+    KB = 1 << (10 * iota)  // 1 << 10 = 1024
+    MB                      // 1 << 20
+    GB                      // 1 << 30
+    TB                      // 1 << 40
+)
+
+// Multiple values per line
+const (
+    a, b = iota, iota + 10  // 0, 10
+    c, d                     // 1, 11
+    e, f                     // 2, 12
+)
+```
+
+## Typed Enums with Stringer
+
+```go
+type Color int
+
+const (
+    Red Color = iota
+    Green
+    Blue
+)
+
+// Implement Stringer for readable output
+func (c Color) String() string {
+    return [...]string{"Red", "Green", "Blue"}[c]
+}
+
+fmt.Println(Red)  // "Red" instead of "0"
+```
+
+## String Enums
+
+```go
+type Role string
+
+const (
+    RoleAdmin  Role = "admin"
+    RoleUser   Role = "user"
+    RoleGuest  Role = "guest"
+)
+
+// Validate
+func (r Role) IsValid() bool {
+    switch r {
+    case RoleAdmin, RoleUser, RoleGuest:
+        return true
+    }
+    return false
+}
+```
+
+## Enums with Methods
+
+```go
+type HTTPMethod int
+
+const (
+    GET HTTPMethod = iota
+    POST
+    PUT
+    DELETE
+)
+
+func (m HTTPMethod) String() string {
+    return [...]string{"GET", "POST", "PUT", "DELETE"}[m]
+}
+
+func (m HTTPMethod) IsReadOnly() bool {
+    return m == GET
+}
+
+func (m HTTPMethod) RequiresBody() bool {
+    return m == POST || m == PUT
+}
+```
+
+## Enum Validation
+
+```go
+type Priority int
+
+const (
+    PriorityLow Priority = iota
+    PriorityMedium
+    PriorityHigh
+    prioritySentinel  // Private, marks end
+)
+
+func (p Priority) IsValid() bool {
+    return p >= PriorityLow && p < prioritySentinel
+}
+
+// Parse from string
+func ParsePriority(s string) (Priority, error) {
+    switch strings.ToLower(s) {
+    case "low":
+        return PriorityLow, nil
+    case "medium":
+        return PriorityMedium, nil
+    case "high":
+        return PriorityHigh, nil
+    default:
+        return 0, fmt.Errorf("invalid priority: %s", s)
+    }
+}
+```
+
+## Tuple Patterns
+
+Go doesn't have tuples, but there are patterns to achieve similar functionality:
+
+### Multiple Return Values
+
+```go
+// Most common "tuple" pattern
+func getUser() (string, int, error) {
+    return "Alice", 30, nil
+}
+
+name, age, err := getUser()
+```
+
+### Anonymous Structs
+
+```go
+// One-off struct as tuple
+pair := struct {
+    X, Y int
+}{X: 10, Y: 20}
+
+// Return anonymous struct
+func getPoint() struct{ X, Y int } {
+    return struct{ X, Y int }{10, 20}
+}
+```
+
+### Named Tuple Types
+
+```go
+// Define a named type for clarity
+type Pair[T, U any] struct {
+    First  T
+    Second U
+}
+
+// Usage
+p := Pair[string, int]{First: "age", Second: 30}
+```
+
+### Map Key Tuple
+
+```go
+// Composite key using struct
+type Point struct {
+    X, Y int
+}
+
+grid := make(map[Point]string)
+grid[Point{1, 2}] = "A"
+grid[Point{3, 4}] = "B"
+```
+
+## Bitmask Flags
+
+```go
+type Permission int
+
+const (
+    PermRead Permission = 1 << iota
+    PermWrite
+    PermExecute
+    PermDelete
+)
+
+func (p Permission) Has(flag Permission) bool {
+    return p&flag != 0
+}
+
+func (p *Permission) Set(flag Permission) {
+    *p |= flag
+}
+
+func (p *Permission) Clear(flag Permission) {
+    *p &^= flag
+}
+
+func (p *Permission) Toggle(flag Permission) {
+    *p ^= flag
+}
+
+// Usage
+perms := PermRead | PermWrite
+fmt.Println(perms.Has(PermRead))    // true
+fmt.Println(perms.Has(PermExecute)) // false
+perms.Set(PermExecute)
+perms.Clear(PermWrite)
+```
+
+> **Good to know:** Use `iota` for sequential values that don't need to be stable across versions. For values stored in databases or transmitted over the wire, prefer explicit string constants to prevent breaking changes when you add or reorder values.
+
+---
+
+## References
+
+- [Go - Constants](https://go.dev/tour/basics/15)
+- [Go Blog - Constants](https://go.dev/blog/constants)
+- [Effective Go - Constants](https://go.dev/doc/effective_go#constants)
+- [Go Wiki - Iota](https://github.com/golang/go/wiki/Iota)

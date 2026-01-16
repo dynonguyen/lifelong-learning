@@ -1,0 +1,269 @@
+# Map/HashMap/Dictionary/Set
+
+## Map Declaration
+
+```go
+// Using make
+m := make(map[string]int)
+
+// With initial capacity (optional optimization)
+m := make(map[string]int, 100)
+
+// Literal
+m := map[string]int{
+    "one":   1,
+    "two":   2,
+    "three": 3,
+}
+
+// Empty map literal
+m := map[string]int{}
+
+// Nil map (cannot write to it)
+var m map[string]int  // nil
+```
+
+## Basic Operations
+
+```go
+m := make(map[string]int)
+
+// Set
+m["one"] = 1
+m["two"] = 2
+
+// Get
+value := m["one"]  // 1
+
+// Get with existence check
+value, ok := m["three"]
+if ok {
+    fmt.Println("Found:", value)
+} else {
+    fmt.Println("Not found")
+}
+
+// Delete
+delete(m, "one")
+
+// Length
+len(m)  // Number of key-value pairs
+```
+
+## Iteration
+
+```go
+m := map[string]int{"a": 1, "b": 2, "c": 3}
+
+// Iterate key-value pairs
+for key, value := range m {
+    fmt.Printf("%s: %d\n", key, value)
+}
+
+// Keys only
+for key := range m {
+    fmt.Println(key)
+}
+
+// Values only
+for _, value := range m {
+    fmt.Println(value)
+}
+```
+
+> ⚠️ **Map iteration order is randomized!** Don't rely on consistent ordering.
+
+## Checking Key Existence
+
+```go
+// The "comma ok" idiom
+if value, ok := m["key"]; ok {
+    fmt.Println("Found:", value)
+} else {
+    fmt.Println("Key not found")
+}
+
+// Just checking existence
+if _, ok := m["key"]; ok {
+    fmt.Println("Key exists")
+}
+```
+
+## Nested Maps
+
+```go
+// Map of maps
+nested := make(map[string]map[string]int)
+
+// Must initialize inner map before use
+nested["outer"] = make(map[string]int)
+nested["outer"]["inner"] = 42
+
+// Literal initialization
+nested := map[string]map[string]int{
+    "outer": {
+        "inner": 42,
+    },
+}
+```
+
+## Maps with Struct Keys
+
+```go
+type Point struct {
+    X, Y int
+}
+
+// Struct keys work if all fields are comparable
+grid := make(map[Point]string)
+grid[Point{0, 0}] = "origin"
+grid[Point{1, 2}] = "point A"
+```
+
+## Maps with Struct Values
+
+```go
+type User struct {
+    Name  string
+    Email string
+}
+
+users := map[int]User{
+    1: {Name: "Alice", Email: "alice@example.com"},
+    2: {Name: "Bob", Email: "bob@example.com"},
+}
+
+// Cannot modify struct fields directly
+// users[1].Name = "Alicia"  // Error!
+
+// Must replace the whole value
+user := users[1]
+user.Name = "Alicia"
+users[1] = user
+
+// Or use pointer values
+users := map[int]*User{
+    1: {Name: "Alice", Email: "alice@example.com"},
+}
+users[1].Name = "Alicia"  // Works with pointers
+```
+
+## Concurrent Map Access
+
+```go
+// Regular maps are NOT thread-safe!
+// Use sync.Map for concurrent access
+
+import "sync"
+
+var m sync.Map
+
+// Store
+m.Store("key", "value")
+
+// Load
+value, ok := m.Load("key")
+
+// LoadOrStore
+actual, loaded := m.LoadOrStore("key", "default")
+
+// Delete
+m.Delete("key")
+
+// Range
+m.Range(func(key, value interface{}) bool {
+    fmt.Printf("%v: %v\n", key, value)
+    return true  // Continue iteration
+})
+```
+
+## Map Patterns
+
+```go
+// Set using map (no built-in Set type)
+set := make(map[string]struct{})
+set["item1"] = struct{}{}
+set["item2"] = struct{}{}
+
+// Check membership
+if _, ok := set["item1"]; ok {
+    fmt.Println("item1 exists")
+}
+
+// Default values
+func getWithDefault(m map[string]int, key string, def int) int {
+    if v, ok := m[key]; ok {
+        return v
+    }
+    return def
+}
+
+// Counter
+counter := make(map[string]int)
+for _, word := range words {
+    counter[word]++
+}
+
+// Grouping
+groups := make(map[string][]User)
+for _, user := range users {
+    groups[user.Role] = append(groups[user.Role], user)
+}
+```
+
+## maps Package (Go 1.21+)
+
+```go
+import "maps"
+
+m1 := map[string]int{"a": 1, "b": 2}
+m2 := map[string]int{"b": 3, "c": 4}
+
+// Clone
+m3 := maps.Clone(m1)
+
+// Copy (into existing map)
+maps.Copy(m1, m2)  // m1 now has {"a": 1, "b": 3, "c": 4}
+
+// Equal
+maps.Equal(m1, m2)
+
+// Delete matching keys
+maps.DeleteFunc(m1, func(k string, v int) bool {
+    return v > 2
+})
+
+// Collect keys
+keys := slices.Collect(maps.Keys(m1))
+
+// Collect values
+values := slices.Collect(maps.Values(m1))
+```
+
+## Performance Tips
+
+```go
+// Pre-allocate when size is known
+m := make(map[string]int, expectedSize)
+
+// Clear map (reuse memory)
+for k := range m {
+    delete(m, k)
+}
+// Or in Go 1.21+
+clear(m)
+
+// Maps grow automatically, but never shrink
+// Create new map if you need to reclaim memory
+```
+
+> **Good to know:** Map keys must be comparable types (support `==`). This includes strings, numbers, booleans, pointers, channels, and structs with comparable fields. Slices, maps, and functions cannot be map keys.
+
+---
+
+## References
+
+- [Go - Maps](https://go.dev/tour/moretypes/19)
+- [Go Blog - Go maps in action](https://go.dev/blog/maps)
+- [Go - sync.Map](https://pkg.go.dev/sync#Map)
+- [Go - maps Package](https://pkg.go.dev/maps)

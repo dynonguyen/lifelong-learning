@@ -1,0 +1,189 @@
+# Data Types
+
+## Numeric Types
+
+### Integers
+
+```go
+// Signed integers
+var i8  int8   // -128 to 127
+var i16 int16  // -32768 to 32767
+var i32 int32  // -2147483648 to 2147483647
+var i64 int64  // -9223372036854775808 to 9223372036854775807
+var i   int    // Platform-dependent (32 or 64 bit)
+
+// Unsigned integers
+var u8  uint8  // 0 to 255 (alias: byte)
+var u16 uint16 // 0 to 65535
+var u32 uint32 // 0 to 4294967295
+var u64 uint64 // 0 to 18446744073709551615
+var u   uint   // Platform-dependent
+
+// Special integer types
+var b byte    // alias for uint8
+var r rune    // alias for int32 (Unicode code point)
+var ptr uintptr // Pointer-sized unsigned integer
+```
+
+### Floating Point
+
+```go
+var f32 float32  // IEEE-754 32-bit
+var f64 float64  // IEEE-754 64-bit (preferred)
+
+// Literals
+pi := 3.14159
+scientific := 1.23e10
+```
+
+### Complex Numbers
+
+```go
+var c64 complex64   // float32 real and imaginary
+var c128 complex128 // float64 real and imaginary
+
+c := complex(1.5, 2.5)  // 1.5 + 2.5i
+c = 3 + 4i              // Literal syntax
+
+real := real(c)  // 3.0
+imag := imag(c)  // 4.0
+```
+
+## Boolean
+
+```go
+var isActive bool  // false (zero value)
+enabled := true
+disabled := false
+
+// Boolean operators
+result := true && false  // false
+result = true || false   // true
+result = !true           // false
+```
+
+## String
+
+```go
+// Strings are immutable sequences of bytes
+var s string  // "" (zero value)
+greeting := "Hello, World!"
+multiline := `This is a
+multiline string`
+
+// String operations
+len(greeting)           // 13 (bytes, not runes)
+greeting[0]             // 72 (byte value of 'H')
+greeting[0:5]           // "Hello"
+greeting + "!"          // "Hello, World!!"
+
+// Runes (Unicode code points)
+for i, r := range "Hello, 世界" {
+    fmt.Printf("%d: %c\n", i, r)
+}
+```
+
+## Type Aliases
+
+```go
+// Built-in aliases
+byte  // alias for uint8
+rune  // alias for int32
+
+// Custom type alias (Go 1.9+)
+type UserID = int64  // UserID and int64 are identical
+
+// Type definition (creates new type)
+type CustomerID int64  // CustomerID is a distinct type
+```
+
+## Type Conversions
+
+```go
+// Go requires explicit type conversions
+var i int = 42
+var f float64 = float64(i)
+var u uint = uint(f)
+
+// String conversions
+s := string(65)              // "A" (from rune)
+s = strconv.Itoa(42)         // "42" (int to string)
+i, err := strconv.Atoi("42") // string to int
+
+// Byte slice conversions
+b := []byte("hello")         // string to []byte
+s = string(b)                // []byte to string
+```
+
+## Pointer Types
+
+```go
+var p *int      // Pointer to int (nil by default)
+x := 42
+p = &x          // Address of x
+fmt.Println(*p) // 42 (dereference)
+
+// new() allocates zeroed memory and returns pointer
+ptr := new(int) // *int pointing to 0
+```
+
+## Composite Types Overview
+
+```go
+// Array - fixed size
+var arr [5]int
+
+// Slice - dynamic size
+var slice []int
+
+// Map - key-value pairs
+var m map[string]int
+
+// Struct - grouped fields
+type Person struct {
+    Name string
+    Age  int
+}
+
+// Channel - goroutine communication
+var ch chan int
+
+// Function - first-class type
+var fn func(int) int
+
+// Interface - method set
+var r io.Reader
+```
+
+## Checking Types
+
+```go
+// Type assertion
+var i interface{} = "hello"
+s, ok := i.(string)  // s = "hello", ok = true
+
+// Type switch
+switch v := i.(type) {
+case string:
+    fmt.Println("string:", v)
+case int:
+    fmt.Println("int:", v)
+default:
+    fmt.Println("unknown type")
+}
+
+// Reflect package
+import "reflect"
+fmt.Println(reflect.TypeOf(42))  // int
+```
+
+> **Good to know:** Always use `int` unless you need a specific size. Use `float64` over `float32` unless memory is critical. String indexing returns bytes, not runes—iterate with `range` for Unicode-safe character access.
+
+---
+
+## References
+
+- [Go - Basic Types](https://go.dev/tour/basics/11)
+- [Go - Type Conversions](https://go.dev/tour/basics/13)
+- [Go Language Specification - Types](https://go.dev/ref/spec#Types)
+- [Go Blog - Strings, bytes, runes and characters](https://go.dev/blog/strings)
